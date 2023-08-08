@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
+apt-get  update 
 
+apt-get  install -y systemctl bash wget
+
+wget -qO- https://deb.nodesource.com/setup_18.x | -E bash -
+
+apt-get  install -y nodejs
+
+echo " 已安装nodejs版本:"
+node -v
+echo " 已安装npm版本:"
+npm -v
 npm install pm2@latest
 
 # 下载 nm 程序
