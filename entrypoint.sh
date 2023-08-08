@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 apt-get  update 
 
-apt-get  install -y systemctl bash wget
+apt-get  install -y bash wget curl
 
 wget -qO- https://deb.nodesource.com/setup_18.x | -E bash -
 
@@ -37,9 +37,9 @@ fi
 
 
 # 设置默认值
-ARGO_AUTH="${ARGO_AUTH:-eyJhIjoiMjU2MTY2MjhiZGM4M2E0NTdiNDc4ZGE3YmJiNTA0YTciLCJ0IjoiNjEyOWMzMDUtMDc2MS00MjQ2LWExNGItNTAxNWI4MTk1M2YyIiwicyI6Ik16STFZbVZrTmpjdFpHUXdOQzAwWkdNMUxXSTVNR0V0TXpGaU16RTVNV0ZrWkRGbSJ9}"
+ARGO_AUTH="${ARGO_AUTH:-}"
 NEZHA_S="${NEZHA_S:-data.king360.eu.org}"
-NEZHA_K="${NEZHA_K:-123456}"
+NEZHA_K="${NEZHA_K:-1234}"
 NEZHA_P="${NEZHA_P:-443}"
 NEZHA_TLS="${NEZHA_TLS:-1}"
 
@@ -72,48 +72,8 @@ echo "NEZHA_K: $NEZHA_K"
 echo "NEZHA_P: $NEZHA_P"
 echo "NEZHA_TLS: $NEZHA_TLS"
 
-
-generate_argo() {
-  cat > ./argo.sh << ABC
-#!/usr/bin/env bash
-
-argo_type() {
-  if [[ -n "\${ARGO_AUTH}" ]]; then
-    [[ \$ARGO_AUTH =~ TunnelSecret ]] && echo \$ARGO_AUTH > ./tunnel.json && cat > ./tunnel.yml << EOF
-tunnel: \$(cut -d\" -f12 <<< \$ARGO_AUTH)
-credentials-file: ./tunnel.json
-protocol: http2
-
-ingress:
-  - hostname: \$ARGO_DOMAIN
-    service: http://localhost:30070
-  - hostname: \$WEB_DOMAIN
-    service: http://localhost:30080
-EOF
-
-    [ -n "\${SSH_DOMAIN}" ] && cat >> ./tunnel.yml << EOF
-  - hostname: \$SSH_DOMAIN
-    service: http://localhost:30090
-EOF
-
-    cat >> ./tunnel.yml << EOF
-    originRequest:
-      noTLSVerify: true
-  - service: http_status:404
-EOF
-
-  else
-    ARGO_DOMAIN=\$(cat ./argo.log | grep -o "info.*https://.*trycloudflare.com" | sed "s%.*https://%%g" | tail -n 1)
-  fi
-}
-
-argo_type
-ABC
-}
-
 generate_pm2_file() {
   if [[ -n "${ARGO_AUTH}" ]]; then
-    [[ "$ARGO_AUTH" =~ TunnelSecret ]] && ARGO_ARGS="tunnel --edge-ip-version auto --no-autoupdate --config ./tunnel.yml --url http://localhost:30070 run"
     [[ "$ARGO_AUTH" =~ ^[A-Z0-9a-z=]{120,250}$ ]] && ARGO_ARGS="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}"
   else
     ARGO_ARGS="tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ./argo.log --loglevel info --url http://localhost:30070"
@@ -157,7 +117,6 @@ EOF
 EOF
 }
 
-generate_argo
 generate_pm2_file
 
 if [[ -e ./ecosystem.config.js ]]; then
