@@ -3,9 +3,11 @@ apt-get  update
 
 apt-get  install -y bash wget curl
 
-wget -qO- https://deb.nodesource.com/setup_18.x | -E bash -
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 
-apt-get  install -y nodejs
+apt-get install -y nodejs
+
+apt-get install -y npm
 
 echo " 已安装nodejs版本:"
 node -v
