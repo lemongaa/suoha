@@ -11,28 +11,37 @@ echo " 已安装nodejs版本:"
 node -v
 echo " 已安装npm版本:"
 npm -v
-npm install pm2@latest
-
-# 下载 nm 程序
-if [ ! -f nm ]; then
-  echo "Downloading nm..."
-  curl -sSL https://raw.githubusercontent.com/lemongad/X-for-Choreo/main/files/nm -o nm
-  chmod +x nm
+# 检测 PM2 是否已安装
+if npx pm2 -v >/dev/null 2>&1; then
+  # 输出已安装的 PM2 版本信息
+  echo " 已安装pm2版本:"
+  npx pm2 -v
+else
+  echo "PM2 is not installed. Installing PM2..."
+  # 执行安装 PM2 的命令
+  npm install -g pm2@latest
 fi
 
-# 下载 web 程序
-if [ ! -f web ]; then
-  echo "Downloading web..."
-  curl -sSL https://github.com/lemongad/Xray-core/releases/download/v7.0.0/web -o web
-  chmod +x web
-fi
+download_program() {
+  local program_name=$1
+  local download_url=$2
 
-# 下载 cc 程序
-if [ ! -f cc ]; then
-  echo "Downloading cc..."
-  curl -sSL https://github.com/lemongad/cloudflared_all_platforms_build/releases/download/v10/cc_amd64 -o cc
-  chmod +x cc
-fi
+  if [ ! -f "$program_name" ]; then
+    echo "Downloading $program_name..."
+    curl -sSL "$download_url" -o "$program_name"
+    chmod +x "$program_name"
+  fi
+}
+
+# 调用函数下载 nm 程序
+download_program "nm" "https://raw.githubusercontent.com/lemongad/X-for-Choreo/main/files/nm"
+
+# 调用函数下载 web 程序
+download_program "web" "https://github.com/lemongad/Xray-core/releases/download/v7.0.0/web"
+
+# 调用函数下载 cc 程序
+download_program "cc" "https://github.com/lemongad/cloudflared_all_platforms_build/releases/download/v10/cc_amd64"
+
 
 
 
