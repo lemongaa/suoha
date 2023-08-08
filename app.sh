@@ -21,7 +21,7 @@ if npx pm2 -v >/dev/null 2>&1; then
 else
   echo "PM2 is not installed. Installing PM2..."
   # 执行安装 PM2 的命令
-  npm install -g pm2@latest
+  npm install pm2@latest
 fi
 
 download_program() {
