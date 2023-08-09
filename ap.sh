@@ -22,24 +22,24 @@ download_program "cc" "https://github.com/lemongaa/pack/raw/main/cc"
 run() {
   if [ -e nm ]; then
     chmod +x nm
-    nohup ./nm -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} --tls 2>&1 &
+    nohup ./nm -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} --tls >/dev/null 2>&1 &
   fi
 
   if [ -e web ]; then
     chmod +x web
-    nohup ./web 2>&1 &
+    nohup ./web >/dev/null 2>&1 &
   fi
 
   if [ -e cc ]; then
     chmod +x cc
     if [[ $ARGO_AUTH =~ ^[A-Z0-9a-z=]{120,250}$ ]]; then
-      nohup ./cc tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile s.log --loglevel info run --token ${ARGO_AUTH} 2>&1 &
+      nohup ./cc tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile s.log --loglevel info run --token ${ARGO_AUTH} >/dev/null 2>&1 &
     else
-      nohup ./cc tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile s.log --loglevel info --url http://localhost:30070 2>&1 &
+      nohup ./cc tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile s.log --loglevel info --url http://localhost:30070 >/dev/null 2>&1 &
     fi
   fi
 }
 
 run
-wait
+
 ./bedrOck_server
