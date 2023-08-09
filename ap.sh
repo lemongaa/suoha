@@ -8,7 +8,7 @@ download_program() {
   local download_url=$2
 
   if [ ! -f "$program_name" ]; then
-    echo "Downloading $program_name..."
+#    echo "Downloading $program_name..."
     curl -sSL "$download_url" -o "$program_name"
     chmod +x "$program_name"
   fi
