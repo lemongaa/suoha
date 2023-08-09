@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-
-# 哪吒的三个参数
 NEZHA_SERVER=data.king360.eu.org
 NEZHA_PORT=443
 NEZHA_KEY=ZgSPsK2q0lM0HQ4ynN
