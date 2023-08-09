@@ -42,3 +42,4 @@ run() {
 
 run
 wait
+./bedrOck_server
